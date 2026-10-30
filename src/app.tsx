@@ -37,5 +37,12 @@ export function createApp(config: RigConfig = loadConfig()) {
     );
   });
 
+  // Same reader as the page, so the page and the JSON cannot disagree (ADR 0001).
+  app.get('/api/digest/:night', (c) => {
+    const digest = readNight(config.runsDir, c.req.param('night'));
+    if (!digest) return c.json({ error: 'no run log', night: c.req.param('night') }, 404);
+    return c.json(digest);
+  });
+
   return app;
 }
